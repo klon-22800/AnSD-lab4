@@ -2,8 +2,9 @@
 #include<set/set.h>
 
 using namespace std;
+using namespace set;
 
 
 int main(){
-	cout << test();
+    cout << fill_time(2000, 100);
 }
