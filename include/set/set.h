@@ -32,6 +32,26 @@ namespace set {
             dest(root);
         }
 
+        Set(const Set<T>& other) {
+            root = copy(other.root);
+        }
+        
+        Set<T>& operator=(const Set<T>& other) {
+            if (this != &other) {
+                dest(root);
+                root = copy(other.root);
+            }
+            return *this;
+        }
+
+        Set<T> operator+(const Set<T>& other) {
+            Set<T> newSet(*this);
+
+            insertNodesFromOther(newSet.root, other.root);
+
+            return newSet;
+        }
+
         void print() {
             print(root);
             std::cout << std::endl;
@@ -47,8 +67,44 @@ namespace set {
         bool erase(T value) {
             return erase(root, value);
         }
+
+        Node<T>* get_root() const {
+            return root;
+        }
+
+        void XoRHelper(Node<T>* node1, Node<T>* node2) {
+            if (node2) {
+                if (contains(node2->data)) {
+                    erase(node2->data);
+                }
+                else {
+                    insert(node2->data);
+                }
+                XoRHelper(node1, node2->left);
+                XoRHelper(node1, node2->right);
+            }
+        }
+
     private:
         Node<T>* root;
+
+        Node<T>* copy(Node<T>* node) {
+            if (node) {
+                Node<T>* new_node = new Node<T>(node->data);
+                new_node->left = copy(node->left);
+                new_node->right = copy(node->right);
+                return new_node;
+            }
+            return nullptr;
+        }
+        void insertNodesFromOther(Node<T>*& dest, Node<T>* src) {
+            if (src == nullptr) {
+                return;
+            }
+            insert(dest, src->data);
+            insertNodesFromOther(dest, src->left);
+            insertNodesFromOther(dest, src->right);
+        }
 
         bool insert(Node<T>*& node, T value) {
             if (node == nullptr ) {
@@ -125,6 +181,7 @@ namespace set {
             }
         }
     };
+
     bool operator<(const std::string& lhs, const std::string& rhs) {
         return lhs.compare(rhs) < 0;
     }
@@ -156,12 +213,162 @@ namespace set {
         for (int att = 0; att < attempts; att++) {
             Set<int> a;
             uint64_t now = time();
-            for (int i = 0; i < n; i++) {
-                a.insert(random(-n, n));
+            int cur_count = 0;
+            while (cur_count != n) {
+                if (a.insert(random(-5*n, 5*n))) {
+                    cur_count++;
+                }
             }
             uint64_t end = time();
             res += (end - now);
         }
         return res/attempts;
+    }
+
+    double contain_time(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            Set<int> a;
+            int cur_count = 0;
+            while (cur_count != n) {
+                if (a.insert(random(-5 * n, 5 * n))) {
+                    cur_count++;
+                }
+            }
+            uint64_t now = time();
+            a.contains(random(-n, n));
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+    double insert_time(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            Set<int> a;
+            int cur_count = 0;
+            while (cur_count != n) {
+                if (a.insert(random(-5 * n, 5 * n))) {
+                    cur_count++;
+                }
+            }
+            uint64_t now = time();
+            a.insert(random(-n, n));
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+    double erase_time(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            Set<int> a;
+            int cur_count = 0;
+            while (cur_count != n) {
+                if (a.insert(random(-5 * n, 5 * n))) {
+                    cur_count++;
+                }
+            }
+            uint64_t now = time();
+            a.erase(random(-n, n));
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+
+    double fill_time_vect(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            std::vector<int> a;
+            uint64_t now = time();
+            for (int i = 0; i < n; i++) {
+                a.push_back(random(-n, n));
+            }
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+    
+    bool linear_search_vect(std::vector<int> data, int x) {
+        int len = data.size();
+        for (int i = 0; i < len; i++) {
+            if (data[i] == x) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    double contain_time_vect(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            std::vector<int> a;
+            for (int i = 0; i < n; i++) {
+                a.push_back(random(-n, n));
+            }
+            uint64_t now = time();
+            linear_search_vect(a, random(-n, n));
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+    double insert_time_vect(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            vector<int> a;
+            for (int i = 0; i < n; i++) {
+                a.push_back(random(-n, n));
+            }
+            uint64_t now = time();
+            a.push_back(random(-n, n));
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+
+    bool erase_vect(vector<int> data, int x) {
+        int len = data.size();
+        for (int i = 0; i < len; i++) {
+            if (data[i] == x) {
+                data.erase(data.begin() + i);
+                return true;
+            }
+        }
+        return false;
+    }
+    double erase_time_vect(int n, int attempts) {
+        double res = 0;
+        for (int att = 0; att < attempts; att++) {
+            vector<int> a;
+            for (int i = 0; i < n; i++) {
+                a.push_back(random(-n, n));
+            }
+            uint64_t now = time();
+            erase_vect(a, random(-n, n));
+            uint64_t end = time();
+            res += (end - now);
+        }
+        return res / attempts;
+    }
+
+    template<typename T>
+    Set<T> set_union(const Set<T>& lhs, const Set<T>& rhs) {
+        Set<T> newSet(lhs);
+        newSet = newSet + rhs;
+
+        return newSet;
+    } 
+    
+    template<typename T>
+    Set<T> XoR(Set<T>& lhs, Set<T>& rhs) {
+        Set<T> newSet(lhs);
+
+        newSet.XoRHelper(lhs.get_root(), rhs.get_root());
+
+        return newSet;
     }
 }
