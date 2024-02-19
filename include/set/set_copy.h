@@ -7,7 +7,7 @@
 
 using namespace std; 
 
-namespace set {
+namespace set_c {
     template<typename T>
     class Node {
     public:
@@ -22,21 +22,21 @@ namespace set {
     };
 
     template<typename T>
-    class Set {
+    class Set_c {
     public:
-        Set() {
+        Set_c() {
             root = nullptr;
         }
 
-        ~Set() {
+        ~Set_c() {
             dest(root);
         }
 
-        Set(const Set<T>& other) {
+        Set_c(const Set_c<T>& other) {
             root = copy(other.root);
         }
         
-        Set<T>& operator=(const Set<T>& other) {
+        Set_c<T>& operator=(const Set_c<T>& other) {
             if (this != &other) {
                 dest(root);
                 root = copy(other.root);
@@ -44,8 +44,8 @@ namespace set {
             return *this;
         }
 
-        Set<T> operator+(const Set<T>& other) {
-            Set<T> newSet(*this);
+        Set_c<T> operator+(const Set_c<T>& other) {
+            Set_c<T> newSet(*this);
 
             insertNodesFromOther(newSet.root, other.root);
 
@@ -64,9 +64,13 @@ namespace set {
         bool contains(T value) {
             return contains(root, value);
         }
+        size_t count(T value) {
+            return count(root, value);
+        }
         bool erase(T value) {
             return erase(root, value);
         }
+
         Node<T>* get_root() const {
             return root;
         }
@@ -110,7 +114,7 @@ namespace set {
                 node = new Node<T>(value);
                 return true;
             }
-            if (value < node->data) {
+            if (value <= node->data) {
                 return insert(node->left, value);
             }
             else if (value > node->data) {
@@ -135,7 +139,22 @@ namespace set {
             }
         }
 
-        
+        size_t count(Node<T>* node, T value) {
+
+            if (node == nullptr) {
+                return 0;
+            }
+            size_t c = 0;
+
+            if (node->data == value) {
+                c++;
+            }
+            c += count(node->left, value);
+            c += count(node->right, value);
+
+            return c;
+        }
+
         bool contains(Node<T>* node, T value) {
             if (node == nullptr) {
                 return false;
@@ -184,7 +203,7 @@ namespace set {
     };
 
     bool operator<(const std::string& lhs, const std::string& rhs) {
-        return lhs.compare(rhs) < 0;
+        return lhs.compare(rhs) <= 0;
     }
     bool operator>(const std::string& lhs, const std::string& rhs) {
         return lhs.compare(rhs) > 0;
@@ -213,7 +232,7 @@ namespace set {
     double fill_time(int n, int attempts) {
         double res = 0;
         for (int att = 0; att < attempts; att++) {
-            Set<int> a;
+            Set_c<int> a;
             uint64_t now = time();
             int cur_count = 0;
             while (cur_count != n) {
@@ -230,7 +249,7 @@ namespace set {
     double contain_time(int n, int attempts) {
         double res = 0;
         for (int att = 0; att < attempts; att++) {
-            Set<int> a;
+            Set_c<int> a;
             int cur_count = 0;
             while (cur_count != n) {
                 if (a.insert(random(-5 * n, 5 * n))) {
@@ -247,7 +266,7 @@ namespace set {
     double insert_time(int n, int attempts) {
         double res = 0;
         for (int att = 0; att < attempts; att++) {
-            Set<int> a;
+            Set_c<int> a;
             int cur_count = 0;
             while (cur_count != n) {
                 if (a.insert(random(-5 * n, 5 * n))) {
@@ -264,7 +283,7 @@ namespace set {
     double erase_time(int n, int attempts) {
         double res = 0;
         for (int att = 0; att < attempts; att++) {
-            Set<int> a;
+            Set_c<int> a;
             int cur_count = 0;
             while (cur_count != n) {
                 if (a.insert(random(-5 * n, 5 * n))) {
@@ -358,16 +377,16 @@ namespace set {
     }
 
     template<typename T>
-    Set<T> set_union(const Set<T>& lhs, const Set<T>& rhs) {
-        Set<T> newSet(lhs);
+    Set_c<T> set_union(const Set_c<T>& lhs, const Set_c<T>& rhs) {
+        Set_c<T> newSet(lhs);
         newSet = newSet + rhs;
 
         return newSet;
     } 
     
     template<typename T>
-    Set<T> XoR(Set<T>& lhs, Set<T>& rhs) {
-        Set<T> newSet(lhs);
+    Set_c<T> XoR(Set_c<T>& lhs, Set_c<T>& rhs) {
+        Set_c<T> newSet(lhs);
 
         newSet.XoRHelper(lhs.get_root(), rhs.get_root());
 

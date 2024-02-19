@@ -21,6 +21,9 @@ endif()
 add_library(set SHARED "include/set/set.h" "src/set.cc")
 target_include_directories(set PUBLIC "include")
 
+add_library(set_copy SHARED "include/set/set_copy.h"  "src/set_copy.cc")
+target_include_directories(set_copy PUBLIC "include")
+
 # Подключаем googletest
 include(FetchContent)
 FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/6b63c98ac43efc992122f1da12aaf0a0e0658206.zip)
