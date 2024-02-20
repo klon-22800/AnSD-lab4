@@ -229,7 +229,7 @@ namespace set_c {
         return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
     }
 
-    double fill_time(int n, int attempts) {
+    /*double fill_time(int n, int attempts) {
         double res = 0;
         for (int att = 0; att < attempts; att++) {
             Set_c<int> a;
@@ -374,7 +374,7 @@ namespace set_c {
             res += (end - now);
         }
         return res / attempts;
-    }
+    }*/
 
     template<typename T>
     Set_c<T> set_union(const Set_c<T>& lhs, const Set_c<T>& rhs) {
